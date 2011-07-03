@@ -2,7 +2,11 @@ package com.speedonspeed;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,12 +26,11 @@ import android.widget.TextView;
 *
  */
 public class Splash extends Activity implements View.OnClickListener {
-	private ListView mPhotosList;
-	private ViewGroup mContainer;
-	private ImageView mImageView;
-	private TextView mTextView1;
-	private TextView mTextView2;
-	private Integer mCount = 0;
+	private ViewGroup mLayout1;
+	private ImageView mTopImageView;
+	private ImageView mRotatingImageView;
+	private ImageView mBottomImageView;
+	private Integer mCount = 000;
 	private String mStringCount = "000";
 	static private Integer mCurrentView = 1;
 	private String unitsOfSpeed = "mph";
@@ -35,38 +38,31 @@ public class Splash extends Activity implements View.OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
+		//load the layout 
 		setContentView(R.layout.animations_main_screen);
 
-		mTextView1 = (TextView) findViewById(android.R.id.text1);
-		mTextView2 = (TextView) findViewById(android.R.id.text2);
-		mContainer = (ViewGroup) findViewById(R.id.container);
-		Typeface font = Typeface.createFromAsset(getAssets(),
-				"Parade Regular.ttf");
+		// Setup all of the text views
+		//setUpTextViews();
 
-		mStringCount = String.format("%03d", mCount);
-		mTextView1.setText(mStringCount);
-		mTextView1.setTypeface(font);
-		mTextView1.setTextSize(200);
-		mTextView1.setGravity(Gravity.CENTER);
-		mTextView1.setFocusable(true);
-		mTextView1.setClickable(true);
-		mTextView1.setOnClickListener(this);
-		mCount++;
+		//get the Linear Layout View
+		mLayout1 = (ViewGroup) findViewById(R.id.layout1);
 
-		mStringCount = String.format("%03d", mCount);
-		mTextView2.setText(mStringCount);
-		mTextView2.setTypeface(font);
-		mTextView2.setTextSize(200);
-		mTextView2.setGravity(Gravity.CENTER);
-		mTextView2.setFocusable(true);
-		mTextView2.setClickable(true);
-		mTextView2.setOnClickListener(this);
-
+		//get the Top Image View
+		mTopImageView = (ImageView)findViewById(R.id.topDigit);
+		mTopImageView.setOnClickListener(this);
+		
+		//get the Rotating Image View
+		mRotatingImageView = (ImageView)findViewById(R.id.rotatingDigit);
+		//mRotatingImageView.setOnClickListener(this);
+		
+		//get the Bottom Image View
+		mBottomImageView=(ImageView)findViewById(R.id.bottomDigit);
+		mBottomImageView.setOnClickListener(this);
+		
 		// Since we are caching large views, we want to keep their cache
 		// between each animation
-		mContainer
-				.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
+		mLayout1.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
 
 		/* Use the LocationManager class to obtain GPS locations */
 		LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -78,7 +74,7 @@ public class Splash extends Activity implements View.OnClickListener {
 	}
 
 	/**
-	 * Setup a new 3D rotation on the container view.
+	 * Setup a new 3D rotation on the passed in ImageView.
 	 * 
 	 * @param position
 	 *            the item that was clicked to show a picture, or -1 to show the
@@ -87,44 +83,43 @@ public class Splash extends Activity implements View.OnClickListener {
 	 *            the start angle at which the rotation must begin
 	 * @param end
 	 *            the end angle of the rotation
+	 *            
+	 * @param imageView 
+	 * 			   the image to rotate            
 	 */
 	private void applyRotation(int position, float start, float end,
-			TextView textView) {
-		final float centerX = textView.getWidth() / 2.0f;
-		final float centerY = textView.getHeight() / 2.0f;
+			ImageView imageView) {
+		final float centerX = imageView.getWidth() / 2.0f;
+		final float centerY = imageView.getHeight();
 
 		// Create a new 3D rotation with the supplied parameter
 		// The animation listener is used to trigger the next animation
 		final Rotate3dAnimation rotation = new Rotate3dAnimation(start, end,
-				centerX, centerY, 800.0f, true);
-		rotation.setDuration(500);
+				centerX, centerY, -20.0f, true);
+		rotation.setDuration(250);
 		rotation.setFillAfter(true);
 		rotation.setInterpolator(new AccelerateInterpolator());
 		rotation.setAnimationListener(new DisplayNextView(position));
 
-		textView.startAnimation(rotation);
+		imageView.startAnimation(rotation);
 	}
 
 	public void onClick(View v) {
-		if (mCurrentView == 1) {
-			mCurrentView = 2;
-			applyRotation(2, 0, 90, mTextView1);
-			return;
-		} else {
-			mCurrentView = 1;
-			applyRotation(1, 0, 90, mTextView2);
-			return;
-		}
+		mRotatingImageView.setImageResource(R.drawable.digit1top);
+		mRotatingImageView.setVisibility(View.VISIBLE);	
+		applyRotation(2, 0, -90, mRotatingImageView);
+		return;
 	}
 
 	public void updateSpeed() {
 		if (mCurrentView == 1) {
 			mCurrentView = 2;
-			applyRotation(2, 0, 90, mTextView1);
+			
+			applyRotation(2, 0, 90, mTopImageView);
 			return;
 		} else {
 			mCurrentView = 1;
-			applyRotation(1, 0, 90, mTextView2);
+			applyRotation(1, 0, 90, mBottomImageView);
 			return;
 		}
 	}
@@ -145,7 +140,7 @@ public class Splash extends Activity implements View.OnClickListener {
 		}
 
 		public void onAnimationEnd(Animation animation) {
-			mContainer.post(new SwapViews(mPosition));
+			mLayout1.post(new SwapViews(mPosition));
 		}
 
 		public void onAnimationRepeat(Animation animation) {
@@ -164,37 +159,20 @@ public class Splash extends Activity implements View.OnClickListener {
 		}
 
 		public void run() {
-			final float centerX = mContainer.getWidth() / 2.0f;
-			final float centerY = mContainer.getHeight() / 2.0f;
 			Rotate3dAnimation rotation;
 
-			if (mPosition == 2) {
-				mCount++;
-				mStringCount = String.format("%03d", mCount);
-				mTextView1.setText(mStringCount);
-				mTextView1.setVisibility(View.GONE);
-				mTextView2.setVisibility(View.VISIBLE);
-				rotation = new Rotate3dAnimation(90, 0, centerX, centerY,
-						-300.0f, false);
-				rotation.setDuration(300);
+				float centerX = mRotatingImageView.getWidth() / 2.0f;
+				float centerY = mRotatingImageView.getHeight() ;				
+								
+				mRotatingImageView.setImageResource(R.drawable.digit1bottomflipped);
+				
+				rotation = new Rotate3dAnimation(-90, -180, centerX, centerY,
+						-20.0f, false);
+				rotation.setDuration(250);
 				rotation.setFillAfter(true);
 				rotation.setInterpolator(new DecelerateInterpolator());
-				mTextView2.startAnimation(rotation);
-
-			} else {
-				mCount++;
-				mStringCount = String.format("%03d", mCount);
-				mTextView2.setText(mStringCount);
-				mTextView2.setVisibility(View.GONE);
-				mTextView1.setVisibility(View.VISIBLE);
-				rotation = new Rotate3dAnimation(90, 0, centerX, centerY,
-						-300.0f, false);
-				rotation.setDuration(300);
-				rotation.setFillAfter(true);
-				rotation.setInterpolator(new DecelerateInterpolator());
-				mTextView1.startAnimation(rotation);
-			}
-
+				mRotatingImageView.startAnimation(rotation);
+//				mRotatingImageView.setVisibility(View.GONE);
 		}
 	}
 
@@ -222,19 +200,21 @@ public class Splash extends Activity implements View.OnClickListener {
 
 			if (Splash.mCurrentView == 2) {
 				TextView text1 = (TextView) findViewById(android.R.id.text1);
-				Integer text1CurrentSpeed = Integer.parseInt((text1.getText()).toString());
+				Integer text1CurrentSpeed = Integer.parseInt((text1.getText())
+						.toString());
 				if (!text1CurrentSpeed.equals(speedToDisplay)) {
 					text1.setText(String.format("%03d",
 							speedToDisplay.intValue()));
 					updateSpeed();
 				}
-			} else 
-			{
+			} else {
 				TextView text2 = (TextView) findViewById(android.R.id.text2);
-				Integer text2CurrentSpeed = Integer.parseInt(text2.getText().toString());
+				Integer text2CurrentSpeed = Integer.parseInt(text2.getText()
+						.toString());
 				if (!text2CurrentSpeed.equals(speedToDisplay)) {
-				text2.setText(String.format("%03d", speedToDisplay.intValue()));
-				updateSpeed();
+					text2.setText(String.format("%03d",
+							speedToDisplay.intValue()));
+					updateSpeed();
 				}
 			}
 		}
