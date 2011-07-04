@@ -2,38 +2,93 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/container" android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:orientation="vertical"
-	android:background="@drawable/tabbackground">
+	android:layout_height="match_parent" android:orientation="horizontal"
+	android:gravity="center_vertical">
 
 
-	<RelativeLayout android:id="@+id/layout1"
+	<RelativeLayout android:id="@+id/digit1"
 		android:orientation="vertical" 
-		android:layout_width="fill_parent" 
-		android:layout_height="fill_parent">
+		android:layout_width="wrap_content" 
+		android:layout_height="fill_parent"
+		android:padding="5dip">
 		
-		<ImageView android:id="@+id/topDigit" 
+		<ImageView android:id="@+id/digit1Top" 
 		android:src="@drawable/digit1top"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:layout_alignTop="@+id/layout1" />
+		android:layout_alignTop="@+id/digit1" />
 			
-		<ImageView android:id="@+id/bottomDigit" 
+		<ImageView android:id="@+id/digit1Bottom" 
 		android:src="@drawable/digit1bottom"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/topDigit" />
+		android:layout_below="@+id/digit1Top" />
 	
 		<ImageView 
-		android:id="@+id/rotatingDigit" 
+		android:id="@+id/digit1Rotating" 
 		android:src="@drawable/digit1top"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content" 
-			android:layout_alignTop="@+id/topDigit"
-			android:layout_alignBottom="@+id/topDigit"
-			/>			
+			android:layout_alignTop="@+id/digit1Top"
+			android:layout_alignBottom="@+id/digit1Top"/>			
 	
 	</RelativeLayout>
 
+	<RelativeLayout android:id="@+id/digit2"
+		android:orientation="vertical" 
+		android:layout_width="wrap_content" 
+		android:layout_height="fill_parent"
+		android:padding="5dip">
+		
+		<ImageView android:id="@+id/digit2Top" 
+		android:src="@drawable/digit1top"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@+id/digit2" />
+			
+		<ImageView android:id="@+id/digit2Bottom" 
+		android:src="@drawable/digit1bottom"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/digit2Top" />
+	
+		<ImageView 
+		android:id="@+id/digit2Rotating" 
+		android:src="@drawable/digit1top"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:layout_alignTop="@+id/digit2Top"
+			android:layout_alignBottom="@+id/digit2Top"/>			
+	
+	</RelativeLayout>
+	
+	<RelativeLayout android:id="@+id/digit3"
+		android:orientation="vertical" 
+		android:layout_width="wrap_content" 
+		android:layout_height="fill_parent"
+		android:padding="5dip">
+		
+		<ImageView android:id="@+id/digit3Top" 
+		android:src="@drawable/digit1top"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@+id/digit3" />
+			
+		<ImageView android:id="@+id/digit3Bottom" 
+		android:src="@drawable/digit1bottom"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/digit3Top" />
+	
+		<ImageView 
+		android:id="@+id/digit3Rotating" 
+		android:src="@drawable/digit1top"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:layout_alignTop="@+id/digit3Top"
+			android:layout_alignBottom="@+id/digit3Top"/>			
+	
+	</RelativeLayout>
 
 
 
