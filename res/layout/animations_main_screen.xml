@@ -6,31 +6,31 @@
 	android:gravity="center_vertical">
 
 
-	<RelativeLayout android:id="@+id/digit1"
+	<RelativeLayout android:id="@+id/digit3"
 		android:orientation="vertical" 
 		android:layout_width="wrap_content" 
 		android:layout_height="fill_parent"
 		android:padding="5dip">
 		
-		<ImageView android:id="@+id/digit1Top" 
-		android:src="@drawable/digit1top"
+		<ImageView android:id="@+id/digit3Top" 
+		android:src="@drawable/digit0top"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:layout_alignTop="@+id/digit1" />
+		android:layout_alignTop="@+id/digit3" />
 			
-		<ImageView android:id="@+id/digit1Bottom" 
-		android:src="@drawable/digit1bottom"
+		<ImageView android:id="@+id/digit3Bottom" 
+		android:src="@drawable/digit0bottom"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/digit1Top" />
+		android:layout_below="@+id/digit3Top" />
 	
 		<ImageView 
-		android:id="@+id/digit1Rotating" 
-		android:src="@drawable/digit1top"
+		android:id="@+id/digit3Rotating" 
+		android:src="@drawable/digit0top"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content" 
-			android:layout_alignTop="@+id/digit1Top"
-			android:layout_alignBottom="@+id/digit1Top"/>			
+			android:layout_alignTop="@+id/digit3Top"
+			android:layout_alignBottom="@+id/digit3Top"/>			
 	
 	</RelativeLayout>
 
@@ -41,20 +41,20 @@
 		android:padding="5dip">
 		
 		<ImageView android:id="@+id/digit2Top" 
-		android:src="@drawable/digit1top"
+		android:src="@drawable/digit0top"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
 		android:layout_alignTop="@+id/digit2" />
 			
 		<ImageView android:id="@+id/digit2Bottom" 
-		android:src="@drawable/digit1bottom"
+		android:src="@drawable/digit0bottom"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
 		android:layout_below="@+id/digit2Top" />
 	
 		<ImageView 
 		android:id="@+id/digit2Rotating" 
-		android:src="@drawable/digit1top"
+		android:src="@drawable/digit0top"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content" 
 			android:layout_alignTop="@+id/digit2Top"
@@ -62,31 +62,31 @@
 	
 	</RelativeLayout>
 	
-	<RelativeLayout android:id="@+id/digit3"
+	<RelativeLayout android:id="@+id/digit1"
 		android:orientation="vertical" 
 		android:layout_width="wrap_content" 
 		android:layout_height="fill_parent"
 		android:padding="5dip">
 		
-		<ImageView android:id="@+id/digit3Top" 
-		android:src="@drawable/digit1top"
+		<ImageView android:id="@+id/digit1Top" 
+		android:src="@drawable/digit0top"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:layout_alignTop="@+id/digit3" />
+		android:layout_alignTop="@+id/digit1" />
 			
-		<ImageView android:id="@+id/digit3Bottom" 
-		android:src="@drawable/digit1bottom"
+		<ImageView android:id="@+id/digit1Bottom" 
+		android:src="@drawable/digit0bottom"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/digit3Top" />
+		android:layout_below="@+id/digit1Top" />
 	
 		<ImageView 
-		android:id="@+id/digit3Rotating" 
-		android:src="@drawable/digit1top"
+		android:id="@+id/digit1Rotating" 
+		android:src="@drawable/digit0top"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content" 
-			android:layout_alignTop="@+id/digit3Top"
-			android:layout_alignBottom="@+id/digit3Top"/>			
+			android:layout_alignTop="@+id/digit1Top"
+			android:layout_alignBottom="@+id/digit1Top"/>			
 	
 	</RelativeLayout>
 

@@ -25,14 +25,41 @@ import android.widget.TextView;
 
 /**
 *
+*Splash class
+*
+*NOTE: Member variables prefixed by 'digit#' refer to one of the three digits
+*used to represent speed or count on the screen. The digits are labelled from left
+*to right on the screen, with digit 1 being on the far right and digit 3 being on the far
+*left.
 *
  */
 public class Splash extends Activity implements View.OnClickListener {
-	private ViewGroup mLayout1;
+	private ViewGroup digit1RelativeView;
 	private ImageView digit1TopImageView;
 	private ImageView digit1RotatingImageView;
 	private ImageView digit1BottomImageView;
-	private Integer mCount = 000;
+	private Integer digit1CurrentValue;
+	private Integer digit1NewValue;
+	private boolean digit1UpdateInProgress;
+
+	private ViewGroup digit2RelativeView;
+	private ImageView digit2TopImageView;
+	private ImageView digit2RotatingImageView;
+	private ImageView digit2BottomImageView;
+	private Integer digit2CurrentValue;
+	private Integer digit2NewValue;
+	private boolean digit2UpdateInProgress;
+
+	private ViewGroup digit3RelativeView;
+	private ImageView digit3TopImageView;
+	private ImageView digit3RotatingImageView;
+	private ImageView digit3BottomImageView;
+	private Integer digit3CurrentValue;
+	private Integer digit3NewValue;
+	private boolean digit3UpdateInProgress;
+
+	private Integer onClickCount = 000;
+	private Integer currentSpeed = 000;
 	private Integer colorTint = 0x00000000;
 		
 	/**
@@ -52,11 +79,48 @@ public class Splash extends Activity implements View.OnClickListener {
 		//load the layout 
 		setContentView(R.layout.animations_main_screen);
 
-		// Setup all of the text views
-		//setUpTextViews();
+		//Initialize Digit 1 
+		setUpDigit1();
+		
+		//Initialize Digit 2 
+		setUpDigit2();
+		
+		//Initialize Digit 3 
+		setUpDigit3();
 
+		//Use the LocationManager class to obtain GPS locations
+		LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		LocationListener mlocListener = new CustomLocationListener();
+		mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
+				mlocListener);
+		mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,
+				0, mlocListener);
+	}
+	
+	@Override
+	protected void onStart() {
+
+		super.onStart();
+//		updateSpeed(0,999);
+
+		
+	}
+
+
+
+	/**
+	 * setupDigit1 is used to initialize Digit 1 to display "0" and setup the 
+	 * click listener for the digit
+	 * 
+	 * @return void
+	 */
+	private void setUpDigit1() {
+		
+		//set the current value of digit 1 to zero
+		digit1CurrentValue = 0;
+		
 		//get the Linear Layout View
-		mLayout1 = (ViewGroup) findViewById(R.id.digit1);
+		digit1RelativeView = (ViewGroup) findViewById(R.id.digit1);
 
 		//Set the Lighting Color Filter
 		LightingColorFilter lf = new LightingColorFilter(0xFFFFFFFF,colorTint);		
@@ -77,16 +141,176 @@ public class Splash extends Activity implements View.OnClickListener {
 		
 		// Since we are caching large views, we want to keep their cache
 		// between each animation
-		mLayout1.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
-
-		/* Use the LocationManager class to obtain GPS locations */
-		LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		LocationListener mlocListener = new CustomLocationListener();
-		mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
-				mlocListener);
-		mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,
-				0, mlocListener);
+		digit1RelativeView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
 	}
+
+	/**
+	 * setupDigit2 is used to initialize Digit 2 to display "0" and setup the 
+	 * click listener for the digit
+	 * 
+	 * @return void
+	 */
+	private void setUpDigit2() {
+
+		//set the current value of digit 2 to zero
+		digit2CurrentValue = 0;
+
+		//get the Linear Layout View
+		digit2RelativeView = (ViewGroup) findViewById(R.id.digit2);
+
+		//Set the Lighting Color Filter
+		LightingColorFilter lf = new LightingColorFilter(0xFFFFFFFF,colorTint);		
+		
+		//get the Top Image View
+		digit2TopImageView = (ImageView)findViewById(R.id.digit2Top);
+		digit2TopImageView.setOnClickListener(this);	
+		digit2TopImageView.setColorFilter(lf);
+		
+		//get the Rotating Image View
+		digit2RotatingImageView = (ImageView)findViewById(R.id.digit2Rotating);
+		digit2RotatingImageView.setColorFilter(lf);
+		
+		//get the Bottom Image View
+		digit2BottomImageView=(ImageView)findViewById(R.id.digit2Bottom);
+		digit2BottomImageView.setOnClickListener(this);
+		digit2BottomImageView.setColorFilter(lf);
+		
+		// Since we are caching large views, we want to keep their cache
+		// between each animation
+		digit2RelativeView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
+	}
+
+	/**
+	 * setupDigit3 is used to initialize Digit 3 to display "0" and setup the 
+	 * click listener for the digit
+	 * 
+	 * @return void
+	 */
+	private void setUpDigit3() {
+		
+		//set the current value of digit 3 to zero
+		digit3CurrentValue = 0;
+		
+		//get the Linear Layout View
+		digit3RelativeView = (ViewGroup) findViewById(R.id.digit3);
+
+		//Set the Lighting Color Filter
+		LightingColorFilter lf = new LightingColorFilter(0xFFFFFFFF,colorTint);		
+		
+		//get the Top Image View
+		digit3TopImageView = (ImageView)findViewById(R.id.digit3Top);
+		digit3TopImageView.setOnClickListener(this);	
+		digit3TopImageView.setColorFilter(lf);
+		
+		//get the Rotating Image View
+		digit3RotatingImageView = (ImageView)findViewById(R.id.digit3Rotating);
+		digit3RotatingImageView.setColorFilter(lf);
+		
+		//get the Bottom Image View
+		digit3BottomImageView=(ImageView)findViewById(R.id.digit3Bottom);
+		digit3BottomImageView.setOnClickListener(this);
+		digit3BottomImageView.setColorFilter(lf);
+		
+		// Since we are caching large views, we want to keep their cache
+		// between each animation
+		digit3RelativeView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
+	}
+	
+/**
+ * onClick(View v) - Click handler for all three digits. It calls updateDigits
+ * passing in the old and new count values to be displayed by the digits
+ * 
+ * @return void
+ */
+	public void onClick(View v) {
+		updateDigits(onClickCount, ++onClickCount);
+	}
+
+	/**
+	 * updateSpeed() - Called to update the speed displayed by the digits.
+	 * 
+	 * @param oldSpeed - old speed value
+	 * 
+	 * @param newSpeed - new speed value
+	 * 
+	 * @return void
+	 */
+	public void updateSpeed(Integer oldSpeed, Integer newSpeed) {
+		updateDigits(oldSpeed, newSpeed);
+	}
+	
+/**
+ * updateDigits() -  Will redraw the three digits with the proper value.
+ *   
+ * @param oldValue - the initial value of the digits
+ * 
+ * @param newValue - the ending value of the digits
+ * 
+ * @return void
+ */	
+private void updateDigits(Integer oldValue, Integer newValue) {
+	
+	
+	boolean digit1UpdateRequired = false;
+	boolean digit2UpdateRequired = false;
+	boolean digit3UpdateRequired = false;
+
+	//parse out the digits in the currentClickCount
+	String currentClickCount = String.format("%03d", oldValue.intValue());
+	digit1CurrentValue = (currentClickCount.length() == 3) ? Integer.parseInt(currentClickCount.substring(2,3)): 0;
+	digit2CurrentValue = (currentClickCount.length() >= 2) ? Integer.parseInt(currentClickCount.substring(1,2)): 0;
+	digit3CurrentValue = (currentClickCount.length() >= 1) ? Integer.parseInt(currentClickCount.substring(0,1)): 0;
+	
+	//parse out the digits in the newClickCount
+	String newClickCount = String.format("%03d", newValue.intValue());
+	digit1NewValue = (newClickCount.length() == 3) ? Integer.parseInt(newClickCount.substring(2,3)): 0;
+	digit2NewValue = (newClickCount.length() >= 2) ? Integer.parseInt(newClickCount.substring(1,2)): 0;
+	digit3NewValue = (newClickCount.length() >= 1) ? Integer.parseInt(newClickCount.substring(0,1)): 0;
+			
+	//determine which digits require updates
+	digit1UpdateRequired = (digit1CurrentValue != digit1NewValue) ? true: false;
+	digit2UpdateRequired = (digit2CurrentValue != digit2NewValue) ? true: false;
+	digit3UpdateRequired = (digit3CurrentValue != digit3NewValue) ? true: false;
+
+	//update digit 1 if required
+	if(digit1UpdateRequired && !digit1UpdateInProgress){
+	String rotatingDigit = "com.speedonspeed:drawable/digit" + digit1CurrentValue + "top";
+	int rotatingDigitResource = this.getResources().getIdentifier(rotatingDigit, null, null);			
+	digit1RotatingImageView.setImageResource(rotatingDigitResource);
+	digit1RotatingImageView.setVisibility(View.VISIBLE);	
+	String topDigit = "com.speedonspeed:drawable/digit" + digit1NewValue + "top";
+	int topDigitResource = this.getResources().getIdentifier(topDigit, null, null);
+	digit1TopImageView.setImageResource(topDigitResource);
+	digit1UpdateInProgress = true;
+	applyRotation(0, 0, -90, digit1RotatingImageView);
+	}
+	
+	//update digit 2 if required
+	if(digit2UpdateRequired && !digit2UpdateInProgress){
+	String rotatingDigit = "com.speedonspeed:drawable/digit" + digit2CurrentValue + "top";
+	int rotatingDigitResource = this.getResources().getIdentifier(rotatingDigit, null, null);			
+	digit2RotatingImageView.setImageResource(rotatingDigitResource);
+	digit2RotatingImageView.setVisibility(View.VISIBLE);	
+	String topDigit = "com.speedonspeed:drawable/digit" + digit2NewValue + "top";
+	int topDigitResource = this.getResources().getIdentifier(topDigit, null, null);
+	digit2TopImageView.setImageResource(topDigitResource);
+	digit2UpdateInProgress = true;
+	applyRotation(0, 0, -90, digit2RotatingImageView);
+	}
+	
+	//update digit 3 if required
+	if(digit3UpdateRequired && !digit3UpdateInProgress){
+	String rotatingDigit = "com.speedonspeed:drawable/digit" + digit3CurrentValue + "top";
+	int rotatingDigitResource = this.getResources().getIdentifier(rotatingDigit, null, null);			
+	digit3RotatingImageView.setImageResource(rotatingDigitResource);
+	digit3RotatingImageView.setVisibility(View.VISIBLE);	
+	String topDigit = "com.speedonspeed:drawable/digit" + digit3NewValue + "top";
+	int topDigitResource = this.getResources().getIdentifier(topDigit, null, null);
+	digit3TopImageView.setImageResource(topDigitResource);
+	digit3UpdateInProgress = true;
+	applyRotation(0, 0, -90, digit3RotatingImageView);
+	}
+}
 
 	/**
 	 * Setup a new 3D rotation on the passed in ImageView.
@@ -102,112 +326,92 @@ public class Splash extends Activity implements View.OnClickListener {
 	 * @param imageView 
 	 * 			   the image to rotate            
 	 */
-	private void applyRotation(int position, float start, float end,
-			ImageView imageView) {
+	private void applyRotation(int position, float start, float end, ImageView imageView) {
 		final float centerX = imageView.getWidth() / 2.0f;
 		final float centerY = imageView.getHeight();
-
 		// Create a new 3D rotation with the supplied parameter
 		// The animation listener is used to trigger the next animation
-		final Rotate3dAnimation rotation = new Rotate3dAnimation(start, end,
-				centerX, centerY, -20.0f, true);
+		final Rotate3dAnimation rotation = new Rotate3dAnimation(start, end, centerX, centerY, -20.0f, true);
 		rotation.setDuration(flipTime);
 		rotation.setFillAfter(true);
 		rotation.setInterpolator(new AccelerateInterpolator());
-		rotation.setAnimationListener(new DisplayNextView(position));
-
+		//Setup the Animation Lifecycle listener to handle the second half of each digits 
+		//flip sequence
+		rotation.setAnimationListener(new DisplayNextView());
 		imageView.startAnimation(rotation);
 	}
 
-	public void onClick(View v) {
-
-		switch(v.getId()){
-
-		case R.id.digit1Bottom: case R.id.digit1Top:
-		{
-		if(mCount == 0)
-		{		
-		digit1RotatingImageView.setImageResource(R.drawable.digit1top);
-		digit1RotatingImageView.setVisibility(View.VISIBLE);	
-		digit1TopImageView.setImageResource(R.drawable.digit2top);
-		}
-		else
-		{
-		digit1RotatingImageView.setImageResource(R.drawable.digit2top);
-		digit1RotatingImageView.setVisibility(View.VISIBLE);	
-		digit1TopImageView.setImageResource(R.drawable.digit1top);
-		}
-		break;
-		}
-		}
-		applyRotation(0, 0, -90, digit1RotatingImageView);
-		return;
-	}
-
 	/**
-	 * updateSpeed is called to set the digits animations
-	 * 
-	 * @return void
-	 */
-	public void updateSpeed() {
-	
-	}
-
-	/**
-	 * This class listens for the end of the first half of the animation. It
-	 * then posts a new action that effectively swaps the views when the
-	 * container is rotated 90 degrees and thus invisible.
+	 * The DisplayNextView class is the animation lifecycle listener registered
+	 * with each digits animation sequence. At the end of each digits flip 
+	 * sequence it will post a message and initialize SwapViews which 
+	 * will finish the animation sequence.
 	 */
 	private final class DisplayNextView implements Animation.AnimationListener {
-		private final int mPosition;
-
-		private DisplayNextView(int position) {
-			mPosition = position;
-		}
-
 		public void onAnimationStart(Animation animation) {
 		}
 
 		public void onAnimationEnd(Animation animation) {
-			mLayout1.post(new SwapViews(mPosition));
+			digit1RelativeView.post(new SwapViews());
 		}
-
+		
 		public void onAnimationRepeat(Animation animation) {
 		}
 	}
 
 	/**
-	 * This class is responsible for swapping the views and start the second
-	 * half of the animation.
+	 * The SwapViews class is responsible for completing the animation
+	 * of each digit. It takes care of the 'second' half of the animation 
+	 * sequence for each digit.
 	 */
 	private final class SwapViews implements Runnable {
-		private final int mPosition;
-
-		public SwapViews(int position) {
-			mPosition = position;
+		
+		public SwapViews() {
 		}
-
+		
 		public void run() {
-			Rotate3dAnimation rotation;
-				
+			Rotate3dAnimation rotation;	
+			if(digit1UpdateInProgress){
+				String rotatingDigit = "com.speedonspeed:drawable/digit" + digit1NewValue + "bottomflipped";
+				int rotatingDigitResource = getResources().getIdentifier(rotatingDigit, null, null);			
+				digit1RotatingImageView.setImageResource(rotatingDigitResource);
+				digit1UpdateInProgress = false;
 				float centerX = digit1RotatingImageView.getWidth() / 2.0f;
 				float centerY = digit1RotatingImageView.getHeight() ;				
-				
-				if (mCount == 0)
-				{
-				digit1RotatingImageView.setImageResource(R.drawable.digit2bottomflipped);
-				mCount = 1;
-				}
-				else
-				{
-					digit1RotatingImageView.setImageResource(R.drawable.digit1bottomflipped);
-					mCount = 0;
-				}				
 				rotation = new Rotate3dAnimation(-90, -180, centerX, centerY,-20.0f, false);
 				rotation.setDuration(flipTime);
 				rotation.setFillAfter(true);
 				rotation.setInterpolator(new DecelerateInterpolator());
 				digit1RotatingImageView.startAnimation(rotation);
+				}
+			
+			if(digit2UpdateInProgress){
+				String rotatingDigit = "com.speedonspeed:drawable/digit" + digit2NewValue + "bottomflipped";
+				int rotatingDigitResource = getResources().getIdentifier(rotatingDigit, null, null);			
+				digit2RotatingImageView.setImageResource(rotatingDigitResource);
+				digit2UpdateInProgress = false;
+				float centerX = digit2RotatingImageView.getWidth() / 2.0f;
+				float centerY = digit2RotatingImageView.getHeight() ;				
+				rotation = new Rotate3dAnimation(-90, -180, centerX, centerY,-20.0f, false);
+				rotation.setDuration(flipTime);
+				rotation.setFillAfter(true);
+				rotation.setInterpolator(new DecelerateInterpolator());
+				digit2RotatingImageView.startAnimation(rotation);
+				}
+			
+			if(digit3UpdateInProgress){
+				String rotatingDigit = "com.speedonspeed:drawable/digit" + digit3NewValue + "bottomflipped";
+				int rotatingDigitResource = getResources().getIdentifier(rotatingDigit, null, null);			
+				digit3RotatingImageView.setImageResource(rotatingDigitResource);
+				digit3UpdateInProgress = false;
+				float centerX = digit3RotatingImageView.getWidth() / 2.0f;
+				float centerY = digit3RotatingImageView.getHeight() ;				
+				rotation = new Rotate3dAnimation(-90, -180, centerX, centerY,-20.0f, false);
+				rotation.setDuration(flipTime);
+				rotation.setFillAfter(true);
+				rotation.setInterpolator(new DecelerateInterpolator());
+				digit3RotatingImageView.startAnimation(rotation);
+				}
 		}
 	}
 
@@ -233,14 +437,12 @@ public class Splash extends Activity implements View.OnClickListener {
 
 			speedToDisplay = (unitsOfSpeed.equals("mph")) ? mphSpeed : kphSpeed;
 
-				TextView text1 = (TextView) findViewById(android.R.id.text1);
-				Integer text1CurrentSpeed = Integer.parseInt((text1.getText())
-						.toString());
-				if (!text1CurrentSpeed.equals(speedToDisplay)) {
-					text1.setText(String.format("%03d",
-							speedToDisplay.intValue()));
-					updateSpeed();
-			}
+			if (currentSpeed != speedToDisplay)
+			{	
+				Integer tempSpeed = currentSpeed;
+				currentSpeed = speedToDisplay;
+				updateSpeed(tempSpeed, speedToDisplay);
+			}		
 		}
 
 		@Override
