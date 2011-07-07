@@ -45,28 +45,42 @@ public final class R {
         public static final int digit9bottom=0x7f02001b;
         public static final int digit9bottomflipped=0x7f02001c;
         public static final int digit9top=0x7f02001d;
-        public static final int icon=0x7f02001e;
+        public static final int gradientbg=0x7f02001e;
+        public static final int icon=0x7f02001f;
+        public static final int kph_icon=0x7f020020;
+        public static final int mph_icon=0x7f020021;
+        public static final int speed_base=0x7f020022;
+        public static final int speed_base_square=0x7f020023;
     }
     public static final class id {
-        public static final int container=0x7f060000;
-        public static final int digit1=0x7f060009;
-        public static final int digit1Bottom=0x7f06000b;
-        public static final int digit1Rotating=0x7f06000c;
-        public static final int digit1Top=0x7f06000a;
-        public static final int digit2=0x7f060005;
-        public static final int digit2Bottom=0x7f060007;
-        public static final int digit2Rotating=0x7f060008;
-        public static final int digit2Top=0x7f060006;
-        public static final int digit3=0x7f060001;
-        public static final int digit3Bottom=0x7f060003;
-        public static final int digit3Rotating=0x7f060004;
-        public static final int digit3Top=0x7f060002;
+        public static final int container=0x7f070000;
+        public static final int digit1=0x7f07000a;
+        public static final int digit1Bottom=0x7f07000c;
+        public static final int digit1Rotating=0x7f07000d;
+        public static final int digit1Top=0x7f07000b;
+        public static final int digit2=0x7f070005;
+        public static final int digit2Bottom=0x7f070007;
+        public static final int digit2Rotating=0x7f070008;
+        public static final int digit2Top=0x7f070006;
+        public static final int digit3=0x7f070001;
+        public static final int digit3Bottom=0x7f070003;
+        public static final int digit3Rotating=0x7f070004;
+        public static final int digit3Top=0x7f070002;
+        public static final int kph_icon=0x7f070010;
+        public static final int mph_icon=0x7f07000f;
+        public static final int noGPS=0x7f070009;
+        public static final int unitsOfSpeed=0x7f07000e;
     }
     public static final class layout {
         public static final int animations_main_screen=0x7f030000;
     }
+    public static final class menu {
+        public static final int menu=0x7f060000;
+    }
     public static final class string {
         public static final int app_name=0x7f050001;
         public static final int hello=0x7f050000;
+        public static final int kph_string=0x7f050002;
+        public static final int mph_string=0x7f050003;
     }
 }

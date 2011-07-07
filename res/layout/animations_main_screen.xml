@@ -3,14 +3,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/container" android:layout_width="fill_parent"
 	android:layout_height="match_parent" android:orientation="horizontal"
-	android:gravity="center_vertical">
+	android:background="@drawable/gradientbg"
+	android:gravity="center">
 
 
 	<RelativeLayout android:id="@+id/digit3"
 		android:orientation="vertical" 
 		android:layout_width="wrap_content" 
-		android:layout_height="fill_parent"
-		android:padding="5dip">
+		android:layout_height="wrap_content"
+		android:padding="4dip">
 		
 		<ImageView android:id="@+id/digit3Top" 
 		android:src="@drawable/digit0top"
@@ -31,14 +32,15 @@
 			android:layout_height="wrap_content" 
 			android:layout_alignTop="@+id/digit3Top"
 			android:layout_alignBottom="@+id/digit3Top"/>			
-	
+		
+			
 	</RelativeLayout>
 
 	<RelativeLayout android:id="@+id/digit2"
 		android:orientation="vertical" 
 		android:layout_width="wrap_content" 
-		android:layout_height="fill_parent"
-		android:padding="5dip">
+		android:layout_height="wrap_content"
+		android:padding="4dip">
 		
 		<ImageView android:id="@+id/digit2Top" 
 		android:src="@drawable/digit0top"
@@ -59,14 +61,26 @@
 			android:layout_height="wrap_content" 
 			android:layout_alignTop="@+id/digit2Top"
 			android:layout_alignBottom="@+id/digit2Top"/>			
-	
+		
+	<TextView android:id="@+id/noGPS"
+		android:text="Waiting for GPS"
+		android:typeface="serif"
+		android:textStyle="bold"
+		android:textSize="20sp"
+		android:textColor="#FF0000FF"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignTop ="@+id/digit2Bottom"
+		android:layout_alignLeft="@+id/digit2Bottom"
+		android:visibility="gone"/>	
+			
 	</RelativeLayout>
 	
 	<RelativeLayout android:id="@+id/digit1"
 		android:orientation="vertical" 
 		android:layout_width="wrap_content" 
-		android:layout_height="fill_parent"
-		android:padding="5dip">
+		android:layout_height="wrap_content"
+		android:padding="4dip">
 		
 		<ImageView android:id="@+id/digit1Top" 
 		android:src="@drawable/digit0top"
@@ -88,8 +102,19 @@
 			android:layout_alignTop="@+id/digit1Top"
 			android:layout_alignBottom="@+id/digit1Top"/>			
 	
+	<TextView android:id="@+id/unitsOfSpeed"
+		android:text="mph"
+		android:typeface="serif"
+		android:textStyle="bold"
+		android:textSize="25sp"
+		android:textColor="#9D000000"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignRight="@+id/digit1Bottom"
+		android:layout_alignBottom="@+id/digit1Bottom"/>
+
 	</RelativeLayout>
 
-
+	
 
 </LinearLayout>

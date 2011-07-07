@@ -2,38 +2,44 @@ package com.speedonspeed;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.LightingColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 /**
 *
-*Splash class
+*The Splash class is an Activity which represents a speedometer. The 
+*three digits used to represent the speed in the speedometer flipped
+*like a retro alarm clock's digits do. The Click Listener interface that the
+*class implements is used for debugging the animation of the digits by
+*causing them to count upwards from 0.
 *
 *NOTE: Member variables prefixed by 'digit#' refer to one of the three digits
-*used to represent speed or count on the screen. The digits are labelled from left
+*used to represent speed on the screen. The digits are labelled from left
 *to right on the screen, with digit 1 being on the far right and digit 3 being on the far
 *left.
 *
+*@author Don Ward
  */
 public class Splash extends Activity implements View.OnClickListener {
+
+	//Member variable related to Digit 1
+	// (the far right digit)
 	private ViewGroup digit1RelativeView;
 	private ImageView digit1TopImageView;
 	private ImageView digit1RotatingImageView;
@@ -42,6 +48,8 @@ public class Splash extends Activity implements View.OnClickListener {
 	private Integer digit1NewValue;
 	private boolean digit1UpdateInProgress;
 
+	//Member variable related to Digit 2
+	//(the middle digit)
 	private ViewGroup digit2RelativeView;
 	private ImageView digit2TopImageView;
 	private ImageView digit2RotatingImageView;
@@ -50,6 +58,8 @@ public class Splash extends Activity implements View.OnClickListener {
 	private Integer digit2NewValue;
 	private boolean digit2UpdateInProgress;
 
+	//Member variable related to Digit 3
+	//(the far left digit)
 	private ViewGroup digit3RelativeView;
 	private ImageView digit3TopImageView;
 	private ImageView digit3RotatingImageView;
@@ -58,20 +68,41 @@ public class Splash extends Activity implements View.OnClickListener {
 	private Integer digit3NewValue;
 	private boolean digit3UpdateInProgress;
 
-	private Integer onClickCount = 000;
+	//onClickCount is used for debugging
+	//using the count mode of the app
+	//private Integer onClickCount = 000;
+	
+	//currentSpeed hold the  speed as an Integer
 	private Integer currentSpeed = 000;
+	
+	//colorTint may be used in the future as a
+	//options menu feature to change
+	//the digits colors
 	private Integer colorTint = 0x00000000;
-		
-	/**
-	 *unitsOfSpeed sets the speed units in either "mph" or "kph"
-	 */
+	
+	//flags to determine whether location
+	//based services are enabled or not
+	private boolean gpsEnabled = false;
+	private boolean networkEnabled = false;
+	
+	//unitsOfSpeed sets the speed units in either "mph" or "kph"
 	private String unitsOfSpeed = "mph";
 
-	/**
-	 * flipTime sets the time for each digit to flip
-	 */
-	private int flipTime = 200;
+	//flipTime sets the time for each digit to flip
+	private int flipTime = 750;
 
+	//mWakeLock used to hold the backlight on while
+	//the app is running
+	private WakeLock mWakeLock;
+
+	
+	/**
+	 * onCreate  - used to create the speedometer, setup
+	 * the LocationManagers for the app and to set up the
+	 * WakeLock for the app
+	 * 
+	 * @return void
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -94,19 +125,70 @@ public class Splash extends Activity implements View.OnClickListener {
 		mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
 				mlocListener);
 		mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,
-				0, mlocListener);
-	}
-	
-	@Override
-	protected void onStart() {
-
-		super.onStart();
-//		updateSpeed(0,999);
-
+			0, mlocListener);
 		
+	    // This code together with the code in onDestroy() and onStop()
+         //will make the screen be always on until this Activity gets destroyed or disappears
+        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock.acquire();
+ 
+        //flip digit 1 for visual effect
+        digit1UpdateInProgress = true;
+        applyRotation(1, 0, -90, digit1RotatingImageView);
+        
 	}
 
+	/**
+	 * onDestroy - overridden to release the WakeLock
+	 * on application shutdown
+	 *
+	 *@return void
+	 */
+	@Override
+    public void onDestroy() {
+		this.mWakeLock.release();
+            super.onDestroy();
+    }
+	
+	/**
+	 * onCreateOptionsMenu - overridden to
+	 * create a custom options menu
+	 * 
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu, menu);
+	    return true;
+	}
 
+	/**
+	 * onOptionsItemSelected - overridden to 
+	 * handle selection of either 'km/h' or 'mph'
+	 * selection from the options menu
+	 * 
+	 * @return boolean
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+		TextView units;
+		switch (item.getItemId()) {
+	    case R.id.mph_icon:
+	        unitsOfSpeed= "mph";
+	        units = (TextView)findViewById(R.id.unitsOfSpeed);
+	        units.setText("mph");
+	        return true;
+	    case R.id.kph_icon:
+	        unitsOfSpeed= "kph";
+	        units = (TextView)findViewById(R.id.unitsOfSpeed);
+	        units.setText("km/h");
+	    	return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
+	}
 
 	/**
 	 * setupDigit1 is used to initialize Digit 1 to display "0" and setup the 
@@ -223,7 +305,8 @@ public class Splash extends Activity implements View.OnClickListener {
  * @return void
  */
 	public void onClick(View v) {
-		updateDigits(onClickCount, ++onClickCount);
+		//updateDigits(onClickCount, ++onClickCount);
+
 	}
 
 	/**
@@ -282,7 +365,7 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 	int topDigitResource = this.getResources().getIdentifier(topDigit, null, null);
 	digit1TopImageView.setImageResource(topDigitResource);
 	digit1UpdateInProgress = true;
-	applyRotation(0, 0, -90, digit1RotatingImageView);
+	applyRotation(1, 0, -90, digit1RotatingImageView);
 	}
 	
 	//update digit 2 if required
@@ -295,7 +378,7 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 	int topDigitResource = this.getResources().getIdentifier(topDigit, null, null);
 	digit2TopImageView.setImageResource(topDigitResource);
 	digit2UpdateInProgress = true;
-	applyRotation(0, 0, -90, digit2RotatingImageView);
+	applyRotation(2, 0, -90, digit2RotatingImageView);
 	}
 	
 	//update digit 3 if required
@@ -308,7 +391,7 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 	int topDigitResource = this.getResources().getIdentifier(topDigit, null, null);
 	digit3TopImageView.setImageResource(topDigitResource);
 	digit3UpdateInProgress = true;
-	applyRotation(0, 0, -90, digit3RotatingImageView);
+	applyRotation(3, 0, -90, digit3RotatingImageView);
 	}
 }
 
@@ -326,7 +409,7 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 	 * @param imageView 
 	 * 			   the image to rotate            
 	 */
-	private void applyRotation(int position, float start, float end, ImageView imageView) {
+	private void applyRotation(int digit, float start, float end, ImageView imageView) {
 		final float centerX = imageView.getWidth() / 2.0f;
 		final float centerY = imageView.getHeight();
 		// Create a new 3D rotation with the supplied parameter
@@ -343,8 +426,8 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 
 	/**
 	 * The DisplayNextView class is the animation lifecycle listener registered
-	 * with each digits animation sequence. At the end of each digits flip 
-	 * sequence it will post a message and initialize SwapViews which 
+	 * with each digits animation sequence. At the end of the first half of each digits
+	 * flip sequence it will post a message and initialize SwapViews which 
 	 * will finish the animation sequence.
 	 */
 	private final class DisplayNextView implements Animation.AnimationListener {
@@ -355,6 +438,37 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 			digit1RelativeView.post(new SwapViews());
 		}
 		
+		public void onAnimationRepeat(Animation animation) {
+		}
+	}
+	
+
+	/**
+	 * The FlipAnimationEndListener class is the animation lifecycle listener 
+	 * registered with each digits animation sequence. At the end of the second
+	 * half of each digits flip sequence it will clear the appropriate UpdateInProgress
+	 * flag.
+	 */
+	private final class FlipAnimationEndListener implements Animation.AnimationListener {
+		private int digit;
+		FlipAnimationEndListener(int newDigit){
+			digit = newDigit;
+		}
+		public void onAnimationStart(Animation animation) {
+		}
+
+		public void onAnimationEnd(Animation animation) {
+		if (digit == 1){
+			digit1UpdateInProgress = false;
+		}
+		if (digit == 2){
+		digit2UpdateInProgress = false;
+		}
+		if (digit == 3){
+			digit3UpdateInProgress = false;
+		}		
+		
+		}
 		public void onAnimationRepeat(Animation animation) {
 		}
 	}
@@ -371,51 +485,65 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 		
 		public void run() {
 			Rotate3dAnimation rotation;	
+			//case where digit1 is rotating
 			if(digit1UpdateInProgress){
 				String rotatingDigit = "com.speedonspeed:drawable/digit" + digit1NewValue + "bottomflipped";
 				int rotatingDigitResource = getResources().getIdentifier(rotatingDigit, null, null);			
 				digit1RotatingImageView.setImageResource(rotatingDigitResource);
-				digit1UpdateInProgress = false;
 				float centerX = digit1RotatingImageView.getWidth() / 2.0f;
 				float centerY = digit1RotatingImageView.getHeight() ;				
 				rotation = new Rotate3dAnimation(-90, -180, centerX, centerY,-20.0f, false);
 				rotation.setDuration(flipTime);
 				rotation.setFillAfter(true);
 				rotation.setInterpolator(new DecelerateInterpolator());
+				//rotation.setAnimationListener(new FlipAnimationEndListener(1));
+				digit1UpdateInProgress = false;
 				digit1RotatingImageView.startAnimation(rotation);
 				}
 			
+			//case where digit2 is rotating			
 			if(digit2UpdateInProgress){
 				String rotatingDigit = "com.speedonspeed:drawable/digit" + digit2NewValue + "bottomflipped";
 				int rotatingDigitResource = getResources().getIdentifier(rotatingDigit, null, null);			
 				digit2RotatingImageView.setImageResource(rotatingDigitResource);
-				digit2UpdateInProgress = false;
 				float centerX = digit2RotatingImageView.getWidth() / 2.0f;
 				float centerY = digit2RotatingImageView.getHeight() ;				
 				rotation = new Rotate3dAnimation(-90, -180, centerX, centerY,-20.0f, false);
 				rotation.setDuration(flipTime);
 				rotation.setFillAfter(true);
 				rotation.setInterpolator(new DecelerateInterpolator());
+				//rotation.setAnimationListener(new FlipAnimationEndListener(2));
+				digit2UpdateInProgress = false;
 				digit2RotatingImageView.startAnimation(rotation);
 				}
 			
+			//case where digit3 is rotating
 			if(digit3UpdateInProgress){
 				String rotatingDigit = "com.speedonspeed:drawable/digit" + digit3NewValue + "bottomflipped";
 				int rotatingDigitResource = getResources().getIdentifier(rotatingDigit, null, null);			
 				digit3RotatingImageView.setImageResource(rotatingDigitResource);
-				digit3UpdateInProgress = false;
 				float centerX = digit3RotatingImageView.getWidth() / 2.0f;
 				float centerY = digit3RotatingImageView.getHeight() ;				
 				rotation = new Rotate3dAnimation(-90, -180, centerX, centerY,-20.0f, false);
 				rotation.setDuration(flipTime);
 				rotation.setFillAfter(true);
 				rotation.setInterpolator(new DecelerateInterpolator());
+				digit3UpdateInProgress = false;
+				//rotation.setAnimationListener(new FlipAnimationEndListener(3r0));
 				digit3RotatingImageView.startAnimation(rotation);
 				}
 		}
 	}
 
-	private class CustomLocationListener implements LocationListener {
+	
+	/**
+	 * The CustomLocationListener class implements
+	 * the LocationListener interface and as such is used 
+	 * to catch GPS location updates and to update the status 
+	 * of the GPS on the screen. 
+	 * 	 *
+	 */
+	private class CustomLocationListener implements LocationListener {	
 		@Override
 		public void onLocationChanged(Location loc) {
 			Integer mphSpeed = 0;
@@ -424,21 +552,36 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 
 			loc.getSpeed();
 			Float floatSpeed = new Float(loc.getSpeed());
-			Integer intMeterPerSecSpeed = floatSpeed.intValue();
+			Float mphFloatSpeed = new Float(floatSpeed * 2.23693629);
+			Float kphFloatSpeed = new Float(floatSpeed * 3.6);
 			if (unitsOfSpeed.equals("mph")) {
-				// m/s to mph is multiply by 1609m/mile and divide by 3600s/h
-				mphSpeed = (intMeterPerSecSpeed * 1609) / 3600;
+				mphSpeed = mphFloatSpeed.intValue();
 			}
 
 			if (unitsOfSpeed.equals("kph")) {
-				// m/s to kph is multiply by 1000m/km and divide by 3600s/h
-				kphSpeed = (intMeterPerSecSpeed * 1000) / 3600;
+				kphSpeed = kphFloatSpeed.intValue();
 			}
 
 			speedToDisplay = (unitsOfSpeed.equals("mph")) ? mphSpeed : kphSpeed;
 
 			if (currentSpeed != speedToDisplay)
 			{	
+				Integer differential = Math.abs(currentSpeed - speedToDisplay);
+				if (differential >= 5){
+					flipTime=25;
+				}
+				else if (differential == 4){
+					flipTime=50;
+				}
+				else if (differential == 3){
+					flipTime=75;
+				}
+				else if (differential == 2){
+					flipTime=100;
+				}
+				else if (differential <= 1){
+					flipTime=150;
+				}
 				Integer tempSpeed = currentSpeed;
 				currentSpeed = speedToDisplay;
 				updateSpeed(tempSpeed, speedToDisplay);
@@ -447,14 +590,74 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 
 		@Override
 		public void onProviderDisabled(String provider) {
+
+			if(provider.equals(LocationManager.GPS_PROVIDER))
+			{
+				gpsEnabled = false;
+			}
+			else if(provider.equals(LocationManager.NETWORK_PROVIDER))
+			{
+				networkEnabled = false;
+			}
+			determineVisibilityOfGPSSignal();
+		
 		}
 
 		@Override
 		public void onProviderEnabled(String provider) {
+
+			if(provider.equals(LocationManager.GPS_PROVIDER))
+			{
+				gpsEnabled = true;
+			}
+			else if(provider.equals(LocationManager.NETWORK_PROVIDER))
+			{
+				networkEnabled = true;
+			}
+			determineVisibilityOfGPSSignal();
+	
 		}
 
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
+			
+			if(provider.equals(LocationManager.GPS_PROVIDER)){
+				if(status == LocationProvider.AVAILABLE)
+					{
+					gpsEnabled = true;
+					}			
+					else 
+					{
+					gpsEnabled = false;
+					}
+			}
+			if(provider.equals(LocationManager.NETWORK_PROVIDER)){
+				if(status == LocationProvider.AVAILABLE)
+					{
+					networkEnabled = true;
+					}			
+					else 
+					{
+					networkEnabled = false;
+					}
+			}
+			determineVisibilityOfGPSSignal();
 		}
-	}
+		
+		private void determineVisibilityOfGPSSignal()
+		{
+			//if both providers are missing then display the GPS missing message
+			if (!gpsEnabled && !networkEnabled)
+			{
+				TextView noGPS = (TextView)findViewById(R.id.noGPS);
+				noGPS.setVisibility(View.VISIBLE);				
+			}
+			//if one provider is enabled then hide the GPS missing message
+			if (gpsEnabled || networkEnabled)
+			{
+			TextView noGPS = (TextView)findViewById(R.id.noGPS);
+			noGPS.setVisibility(View.GONE);
+			}
+		}
+		}
 }

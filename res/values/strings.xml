@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, Splash!</string>
-    <string name="app_name">Speed On Speed</string>
+    <string name="app_name">Retro Speed</string>
+    <string name="kph_string">km/h</string>
+    <string name="mph_string">mph</string>
 </resources>

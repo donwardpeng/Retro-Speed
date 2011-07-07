@@ -22,7 +22,7 @@ import android.graphics.Camera;
 import android.graphics.Matrix;
 
 /**
- * An animation that rotates the view on the Y axis between two specified angles.
+ * An animation that rotates the view on the X axis between two specified angles.
  * This animation also adds a translation on the Z axis (depth) to improve the effect.
  */
 public class Rotate3dAnimation extends Animation {
@@ -35,7 +35,7 @@ public class Rotate3dAnimation extends Animation {
     private Camera mCamera;
 
     /**
-     * Creates a new 3D rotation on the Y axis. The rotation is defined by its
+     * Creates a new 3D rotation on the X axis. The rotation is defined by its
      * start angle and its end angle. Both angles are in degrees. The rotation
      * is performed around a center point on the 2D space, definied by a pair
      * of X and Y coordinates, called centerX and centerY. When the animation
