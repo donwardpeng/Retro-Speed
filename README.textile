@@ -1,0 +1,10 @@
+h1{color:black}. Retro Speed
+
+h2. Description of Application
+
+p{color:black}. Retro Speed is a Google Android Application. It has started as a simple speedometer with 'retro' style numbers which flip when changing.
+
+This application is an Eclipse Helio's project, using the Android Plug-in for Eclipse. It supports Android 1.6 and forward.
+
+This application is currently available in the Android Marketplace at:
+"https://market.android.com/details?id=com.speedonspeed&feature=search_result":https://market.android.com/details?id=com.speedonspeed&feature=search_result
