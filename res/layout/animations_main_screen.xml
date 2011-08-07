@@ -72,7 +72,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignTop ="@+id/digit2Bottom"
 		android:layout_alignLeft="@+id/digit2Bottom"
-		android:visibility="gone"/>	
+		android:visibility="visible"/>	
 			
 	</RelativeLayout>
 	

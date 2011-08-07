@@ -10,6 +10,7 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -68,9 +69,14 @@ public class Splash extends Activity implements View.OnClickListener {
 	private Integer digit3NewValue;
 	private boolean digit3UpdateInProgress;
 
+	
+	 /* Log TAG for Android logging
+	 */
+	private static final String TAG = "com.speedonspeed.Splash";
+
 	//onClickCount is used for debugging
 	//using the count mode of the app
-	//private Integer onClickCount = 000;
+	private Integer onClickCount = 000;
 	
 	//currentSpeed hold the  speed as an Integer
 	private Integer currentSpeed = 000;
@@ -89,7 +95,7 @@ public class Splash extends Activity implements View.OnClickListener {
 	private String unitsOfSpeed = "mph";
 
 	//flipTime sets the time for each digit to flip
-	private int flipTime = 750;
+	private int flipTime = 125;
 
 	//mWakeLock used to hold the backlight on while
 	//the app is running
@@ -124,13 +130,13 @@ public class Splash extends Activity implements View.OnClickListener {
 		LocationListener mlocListener = new CustomLocationListener();
 		mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
 				mlocListener);
-		mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,
-			0, mlocListener);
+		//mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,
+		//	0, mlocListener);
 		
 	    // This code together with the code in onDestroy() and onStop()
          //will make the screen be always on until this Activity gets destroyed or disappears
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "My Tag");
         this.mWakeLock.acquire();
  
         //flip digit 1 for visual effect
@@ -305,8 +311,9 @@ public class Splash extends Activity implements View.OnClickListener {
  * @return void
  */
 	public void onClick(View v) {
-		//updateDigits(onClickCount, ++onClickCount);
-
+		Log.i(TAG,"In onClick");
+	//	updateDigits(onClickCount, ++onClickCount);
+		//RotateDigitAnimation digitRotation = new RotateDigitAnimation()
 	}
 
 	/**
@@ -319,6 +326,7 @@ public class Splash extends Activity implements View.OnClickListener {
 	 * @return void
 	 */
 	public void updateSpeed(Integer oldSpeed, Integer newSpeed) {
+		Log.i(TAG,"Updating Speed.");
 		updateDigits(oldSpeed, newSpeed);
 	}
 	
@@ -544,8 +552,18 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 	 * 	 *
 	 */
 	private class CustomLocationListener implements LocationListener {	
+		 /* Log TAG for Android logging
+		 */
+		private static final String TAG = "com.speedonspeed.LocationListener";
 		@Override
 		public void onLocationChanged(Location loc) {
+			
+			Log.i(TAG,"In LocationListener - onLocationChanged method");
+			//Update the noGPS warning
+			TextView noGPS = (TextView)findViewById(R.id.noGPS);
+			noGPS.setVisibility(View.GONE);
+			
+			
 			Integer mphSpeed = 0;
 			Integer kphSpeed = 0;
 			Integer speedToDisplay = 0;
@@ -606,54 +624,56 @@ private void updateDigits(Integer oldValue, Integer newValue) {
 		@Override
 		public void onProviderEnabled(String provider) {
 
-			if(provider.equals(LocationManager.GPS_PROVIDER))
-			{
-				gpsEnabled = true;
-			}
-			else if(provider.equals(LocationManager.NETWORK_PROVIDER))
-			{
-				networkEnabled = true;
-			}
-			determineVisibilityOfGPSSignal();
+//			if(provider.equals(LocationManager.GPS_PROVIDER))
+//			{
+//				gpsEnabled = true;
+//			}
+//			else if(provider.equals(LocationManager.NETWORK_PROVIDER))
+//			{
+//				networkEnabled = true;
+//			}
+//			determineVisibilityOfGPSSignal();
 	
 		}
 
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			
-			if(provider.equals(LocationManager.GPS_PROVIDER)){
-				if(status == LocationProvider.AVAILABLE)
-					{
-					gpsEnabled = true;
-					}			
-					else 
-					{
-					gpsEnabled = false;
-					}
-			}
-			if(provider.equals(LocationManager.NETWORK_PROVIDER)){
-				if(status == LocationProvider.AVAILABLE)
-					{
-					networkEnabled = true;
-					}			
-					else 
-					{
-					networkEnabled = false;
-					}
-			}
-			determineVisibilityOfGPSSignal();
+//			if(provider.equals(LocationManager.GPS_PROVIDER)){
+//				if(status == LocationProvider.AVAILABLE)
+//					{
+//					gpsEnabled = true;
+//					}			
+//					else 
+//					{
+//					gpsEnabled = false;
+//					}
+//			}
+//			if(provider.equals(LocationManager.NETWORK_PROVIDER)){
+//				if(status == LocationProvider.AVAILABLE)
+//					{
+//					networkEnabled = true;
+//					}			
+//					else 
+//					{
+//					networkEnabled = false;
+//					}
+//			}
+//			determineVisibilityOfGPSSignal();
 		}
 		
 		private void determineVisibilityOfGPSSignal()
 		{
-			//if both providers are missing then display the GPS missing message
-			if (!gpsEnabled && !networkEnabled)
+			String gpsEnabledString = gpsEnabled ? "true":"false";
+			Log.i(TAG,("In determineVisibilityOfGPSSignal method - gpsEnabled = " + gpsEnabledString));
+			//if the GPS provider is missing then display the GPS missing message
+			if (!gpsEnabled)
 			{
 				TextView noGPS = (TextView)findViewById(R.id.noGPS);
 				noGPS.setVisibility(View.VISIBLE);				
 			}
-			//if one provider is enabled then hide the GPS missing message
-			if (gpsEnabled || networkEnabled)
+			//if the GPS provider is enabled then hide the GPS missing message
+			if (gpsEnabled)
 			{
 			TextView noGPS = (TextView)findViewById(R.id.noGPS);
 			noGPS.setVisibility(View.GONE);

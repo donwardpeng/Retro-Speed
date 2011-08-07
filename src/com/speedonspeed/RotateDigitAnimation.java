@@ -1,43 +1,26 @@
-/*
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.speedonspeed;
 
+import android.graphics.Camera;
+import android.graphics.Matrix;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.app.Application;
-import android.graphics.Camera;
-import android.graphics.Matrix;
+import android.widget.ImageView;
 
-/**
- * An animation that rotates the view on the X axis between two specified angles.
- * This animation also adds a translation on the Z axis (depth) to improve the effect.
- */
-public class Rotate3dAnimation extends Animation {
+public class RotateDigitAnimation extends Animation {
     private final float mFromDegrees;
     private final float mToDegrees;
     private final float mCenterX;
     private final float mCenterY;
     private final float mDepthZ;
     private final boolean mReverse;
+    private final int mOldCount;
+    private final int mNewCount;
     private Camera mCamera;
+    private Splash mSplashActivity;
 	 /* Log TAG for Android logging
 	 */
-	private static final String TAG = "com.speedonspeed.Rotation3dAnimation";
+	private static final String TAG = "com.speedonspeed.RotationDigitAnimation";
 	/**
  
     
@@ -56,14 +39,16 @@ public class Rotate3dAnimation extends Animation {
      * @param centerY the Y center of the 3D rotation
      * @param reverse true if the translation should be reversed, false otherwise
      */
-    public Rotate3dAnimation(float fromDegrees, float toDegrees,
-            float centerX, float centerY, float depthZ, boolean reverse) {
-    		mFromDegrees = fromDegrees;
-        mToDegrees = toDegrees;
+    public RotateDigitAnimation(float centerX, float centerY, float depthZ, boolean reverse, Splash splashActivity, ImageView imageToFlip, int oldCount, int newCount) {
+    	mSplashActivity = splashActivity;
+    	mFromDegrees = 0;
+        mToDegrees = -180 ;
         mCenterX = centerX;
         mCenterY = centerY;
-        mDepthZ = depthZ;
+        mDepthZ =  depthZ;
         mReverse = reverse;
+        mOldCount = oldCount;
+        mNewCount = newCount;
     }
 
     @Override
@@ -98,7 +83,8 @@ public class Rotate3dAnimation extends Animation {
 
         matrix.preTranslate(-centerX, -centerY);
         matrix.postTranslate(centerX, centerY);
-		Log.i(TAG, "At bottom of Rotate3dAnimation method.");
+		Log.i(TAG, "At bottom of applyTransformation method.");
        
     }
+
 }
